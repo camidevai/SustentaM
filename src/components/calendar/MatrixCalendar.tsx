@@ -57,8 +57,13 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
       dayWidth: 28       // Siempre 28px por día - TAMAÑO ÓPTIMO
     };
 
-    // Calcular ancho total necesario para TODOS los días
-    const totalRequiredWidth = FIXED_SIZES.courseWidth + FIXED_SIZES.hoursWidth + (totalDays * FIXED_SIZES.dayWidth);
+    // Incluir separación (gap) entre columnas: gap-1 = 4px
+    const GAP_PX = 4;
+    const totalColumns = 2 + totalDays; // CURSOS + HORAS + días
+    const totalGapWidth = (totalColumns - 1) * GAP_PX;
+
+    // Calcular ancho total necesario para TODOS los días + gaps
+    const totalRequiredWidth = FIXED_SIZES.courseWidth + FIXED_SIZES.hoursWidth + (totalDays * FIXED_SIZES.dayWidth) + totalGapWidth;
 
     // El beneficio del menú colapsado es que el CONTENEDOR puede expandirse
     // pero las celdas mantienen su tamaño óptimo
@@ -98,9 +103,10 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
         presencial: 'bg-purple-500 hover:bg-purple-600 border-purple-600',
         teams: 'bg-indigo-500 hover:bg-indigo-600 border-indigo-600'
       }
-    };
+    } as const;
 
-    return baseColors[matrixType][modalidad.toLowerCase()] || 'bg-gray-500 hover:bg-gray-600 border-gray-600';
+    const key = (modalidad.toLowerCase() as 'presencial' | 'teams');
+    return (baseColors[matrixType] as Record<'presencial'|'teams', string>)[key] || 'bg-gray-500 hover:bg-gray-600 border-gray-600';
   };
 
   // Obtener estilo para días no laborables
@@ -138,8 +144,8 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
 
 {/* Encabezados de la matriz (una sola grilla para CURSOS, HORAS y días) */}
 <div
-  className="grid gap-0"
-  style={{ gridTemplateColumns: gridConfig.gridTemplate }}
+  className="grid gap-1"
+  style={{ gridTemplateColumns: gridConfig.gridTemplate, width: gridConfig.totalWidth }}
 >
   {/* Encabezado 'CURSOS' */}
   <div className="p-3 text-center text-xl font-black text-white" style={{ backgroundColor: '#007fcf', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
@@ -172,7 +178,7 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
           {/* Filas de cursos mejoradas */}
           <div className="space-y-4">
             {matrixCourses.map((course, courseIndex) => (
-              <div key={course.id} className="grid gap-1" style={{ gridTemplateColumns: gridConfig.gridTemplate }}>
+              <div key={course.id} className="grid gap-1" style={{ gridTemplateColumns: gridConfig.gridTemplate, width: gridConfig.totalWidth }}>
                 {/* Información del curso optimizada - ICONO EN ESQUINA SUPERIOR DERECHA */}
                 <div className={`p-2 rounded-lg border-2 shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.01] relative ${
                   matrixType === 'propios-ecc'

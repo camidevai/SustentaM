@@ -37,7 +37,10 @@ export const useAuthStore = create<AuthState>()(
           });
 
           logger.debug('AuthStore', 'Buscando usuario con credenciales', { usuario, clave });
-          const user = mockUsers.find(u => u.rut === usuario && u.clave === clave);
+          // Normalizar RUTs para comparación (remover puntos/guiones y mayúsculas)
+          const cleanRut = (rut: string) => rut.replace(/[^0-9Kk]/g, '').toUpperCase();
+          const uClean = cleanRut(usuario);
+          const user = mockUsers.find(u => cleanRut(u.rut) === uClean && u.clave === clave);
 
           if (user) {
             logger.info('AuthStore', 'Usuario encontrado, estableciendo sesión', { userId: user.id, rol: user.rol });

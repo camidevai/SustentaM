@@ -8,6 +8,7 @@ import { Button } from '../ui/Button';
 import { EyeIcon, EyeSlashIcon, UserIcon } from '@heroicons/react/24/outline';
 import { logger } from '../../utils/logger';
 import { LogViewer } from '../debug/LogViewer';
+import { validarRUT } from '../../lib/validations';
 
 const loginSchema = z.object({
   usuario: z.string().min(1, 'Usuario requerido'),
@@ -38,6 +39,15 @@ export function LoginForm() {
     logger.info('LoginForm', 'Intento de login iniciado', { usuario: data.usuario });
     setLoading(true);
     setAuthError('');
+
+    // Pre-validación de formato de RUT antes de consultar la base de datos
+    const { valido, mensaje } = validarRUT(data.usuario);
+    if (!valido) {
+      logger.warn('LoginForm', 'RUT inválido', { rut: data.usuario, mensaje });
+      setAuthError(`RUT inválido: ${mensaje}`);
+      setLoading(false);
+      return;
+    }
 
     try {
       logger.debug('LoginForm', 'Llamando función login del store');

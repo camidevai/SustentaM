@@ -131,43 +131,43 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
 
         {/* Tabla optimizada - FORZAR ancho mínimo para 31 días */}
         <div
-          className="w-full overflow-x-auto"
-          style={{
-            minWidth: `${gridConfig.totalWidth}px`,
-            width: isMenuCollapsed ? 'max-content' : '100%'
-          }}
+          className="w-full max-w-full overflow-x-auto"
         >
           {/* Encabezados optimizados - ADAPTATIVO al estado del menú */}
-          <div className="grid gap-1 mb-3" style={{ gridTemplateColumns: gridConfig.gridTemplate }}>
-            <div className={`p-3 text-center text-sm font-black text-white rounded-lg shadow-lg ${matrixType === 'propios-ecc' ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-purple-600 to-purple-700'}`}>
-              📚 CURSOS
-            </div>
-            <div className={`p-3 text-center text-sm font-black text-white rounded-lg shadow-lg ${matrixType === 'propios-ecc' ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gradient-to-r from-purple-600 to-purple-700'}`}>
-              ⏰ H
-            </div>
-            {days.map((date, index) => {
-              const holidayName = getHolidayName(date);
-              const isNonWorking = isNonWorkingDay(date);
-              const dayOfWeek = format(date, 'EEE', { locale: es });
-              return (
-                <div
-                  key={index}
-                  className={`p-2 text-center text-xs font-bold rounded-lg shadow-md transition-all duration-200 hover:scale-105 ${
-                    isNonWorking
-                      ? 'bg-gradient-to-b from-red-100 to-red-200 text-red-800 border-2 border-red-400'
-                      : 'bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800 border-2 border-gray-300 hover:from-gray-100 hover:to-gray-200'
-                  }`}
-                  title={holidayName || `${dayOfWeek} ${format(date, 'dd/MM/yyyy')}`}
-                >
-                  <div className="text-xs font-medium">{dayOfWeek.slice(0, 1)}</div>
-                  <div className="text-sm font-black">{format(date, 'd')}</div>
-                  {holidayName && (
-                    <div className="text-red-700 text-xs font-black">F</div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          
+
+{/* Encabezados de la matriz (una sola grilla para CURSOS, HORAS y días) */}
+<div
+  className="grid gap-0"
+  style={{ gridTemplateColumns: gridConfig.gridTemplate }}
+>
+  {/* Encabezado 'CURSOS' */}
+  <div className="p-3 text-center text-xl font-black text-white" style={{ backgroundColor: '#007fcf', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
+    CURSOS
+  </div>
+  {/* Encabezado 'HORAS' */}
+  <div className="p-3 text-center text-sm font-black text-white" style={{ backgroundColor: '#007fcf' }}>
+    HORAS
+  </div>
+  {/* Encabezados de los días */}
+  {days.map((date, index) => {
+    const dayOfWeek = format(date, 'EEE', { locale: es });
+    const dayOfMonth = format(date, 'd');
+    const isWeekendHeader = dayOfWeek.slice(0, 1).toLowerCase() === 's' || dayOfWeek.slice(0, 1).toLowerCase() === 'd';
+    const dayColor = isWeekendHeader ? '#0096ff' : '#006cb5';
+
+    return (
+      <div
+        key={index}
+        className="p-1 text-center text-white font-bold text-xs"
+        style={{ backgroundColor: dayColor }}
+      >
+        <div>{dayOfWeek.slice(0, 1).toUpperCase()}</div>
+        <div>{dayOfMonth}</div>
+      </div>
+    );
+  })}
+</div>
 
           {/* Filas de cursos mejoradas */}
           <div className="space-y-4">
@@ -369,12 +369,12 @@ export function MatrixCalendar({ courses, sessions, currentDate, onSessionSelect
             <ChevronLeftIcon className="w-8 h-8 text-blue-600" />
           </Button>
 
-          <h4 className={`text-2xl font-black text-blue-600 min-w-64 px-6 py-3 bg-blue-50 rounded-2xl border-2 border-blue-200 transition-all duration-300 ${
-            isTransitioning ? 'opacity-70 scale-95' : 'opacity-100 scale-100'
-          }`}>
-            {format(currentDate, 'MMMM, yyyy', { locale: es }).toUpperCase()}
-          </h4>
-
+            <h4 className={`text-4xl font-black text-gray-700 uppercase transition-all duration-300 ${
+              isTransitioning ? 'opacity-70 scale-95' : 'opacity-100 scale-100'
+            }`}>
+              {format(currentDate, 'MMMM, yyyy', { locale: es }).toUpperCase()}
+            </h4>
+            
           <Button
             variant="ghost"
             size="lg"

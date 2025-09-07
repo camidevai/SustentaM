@@ -21,6 +21,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotTooltip, setShowForgotTooltip] = useState(false);
   const { login } = useAuthStore();
 
   useEffect(() => {
@@ -134,6 +135,33 @@ export function LoginForm() {
           >
             Ingresar
           </Button>
+
+          {/* Forgot password */}
+          <div className="mt-3 flex justify-center">
+            <div className="relative inline-block" onMouseEnter={() => setShowForgotTooltip(true)} onMouseLeave={() => setShowForgotTooltip(false)}>
+              <button
+                type="button"
+                className="font-sans text-sm font-medium text-primary-600 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded"
+                aria-describedby="forgot-tooltip"
+                onClick={() => {
+                  console.log('Se ejecuta funcionalidad para recordar contraseña...');
+                  setShowForgotTooltip(true);
+                  setTimeout(() => setShowForgotTooltip(false), 1500);
+                }}
+              >
+                ¿Olvidaste tu clave?
+              </button>
+              {/* Tooltip */}
+              <div
+                id="forgot-tooltip"
+                role="tooltip"
+                className={`${showForgotTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 pointer-events-none -translate-y-1'} absolute left-1/2 -translate-x-1/2 mt-2 z-20 w-64 rounded-md bg-gray-900 text-white text-xs px-3 py-2 shadow-lg transition-all duration-150`}
+              >
+                Se ejecuta funcionalidad para recordar contraseña...
+                <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45" aria-hidden="true" />
+              </div>
+            </div>
+          </div>
         </form>
 
         {/* Información de usuarios de prueba con tipografía consistente */}
